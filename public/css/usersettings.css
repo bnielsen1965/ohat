@@ -1,0 +1,12 @@
+
+#userlist table {
+  border-collapse: collapse;
+}
+
+#userlist th {
+  padding: 0 15px;
+}
+
+#userlist tr:nth-child(even) {
+  background-color: #eee;
+}

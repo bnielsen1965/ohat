@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+  <title>Network Settings</title>
+  <link rel="stylesheet" type="text/css" href="css/index.css">
+  <link rel="stylesheet" type="text/css" href="css/network.css">
+  <script src="js/jquery-3.4.1.min.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/network.js"></script>
+</head>
+<body>
+  <div id="menu"></div>
+  <div id="otgsubnetform" class="settingsform">
+    <h2>USB Network</h2>
+    <label for="otgsubnet">USB OTG Subnet: </label><input id="otgsubnet" name="otgsubnet"><br>
+    <label></label><button type="button" id="changeotgsubnet">Change Subnet</button>
+  </div>
+
+  <div id="hostapform" class="settingsform">
+    <h2>WiFi Network</h2>
+    <div id="wifimodeform">
+      <label for="wifimode">WiFi Mode: </label>
+      <select id="wifimode" name="wifimode">
+        <option value=""></option>
+        <option value="host">AP Host</option>
+        <option value="guest">Wifi Guest</option>
+        <option value="off">WiFi Off</option>
+      </select><br>
+      <label></label><button type="button" id="changewifimode">Change Mode</button>
+    </div>
+    <hr>
+    <div id="wifiguestform" class="settingsform">
+      <label for="guestssid">Guest SSID: </label><input id="guestssid" name="guestssid"><br>
+      <label for="guestpsk">Guest PSK: </label><input id="guestpsk" name="guestpsk"><br>
+      <label for="guestpskconfirm">Confirm PSK: </label><input id="guestpskconfirm" name="guestpskconfirm"><br>
+      <label></label><button type="button" id="changeguest">Change Guest Settings</button>
+    </div>
+    <hr>
+    <div id="wifihostform" class="settingsform">
+      <label for="hostsubnet">Subnet: </label><input id="hostsubnet" name="hostsubnet"><br>
+      <label for="hostssid">SSID: </label><input id="hostssid" name="hostssid"><br>
+      <label for="hostchannel">Channel: </label><input id="hostchannel" name="hostchannel"><br>
+      <label for="hostpsk">Host PSK: </label><input id="hostpsk" name="hostpsk"><br>
+      <label for="hostpskconfirm">Confirm PSK: </label><input id="hostpskconfirm" name="hostpskconfirm"><br>
+      <label></label><button type="button" id="changehost">Change AP Host Settings</button>
+    </div>
+  </div>
+
+  <div id="errors"></div>
+  <div id="messages"></div>
+  <div id="notes">
+    DELETE THIS BLOCK
+      <b>NOTE</b><br>
+      need to consider current mode when subnet changes, that is, the current subnet in running config files need to be removed.<br>
+      maybe do a wifi off, change settings, then return to current mode<br>
+      <br>
+        <b>AP Setup</b><br>
+        Packages: hostapd, isc-dhcp-server, dnsmasq<br>
+        Configure: subnet in isc-dhcpd-server (domain name options for subnet)<br>
+        ddns-update-style none; ???<br>
+        authoritative; ???<br>
+        log-facility local7; ???<br>
+        option broadcast-address [portal_dhcp_broadcast]; is current script setting broadcast??? <br>
+      	default-lease-time 600; reduce lease time to help with devices coming and going??? <br>
+      	option domain-name "local"; ???<br>
+      	option domain-name-servers [portal_ipaddress]; need this for capture<br>
+        Maybe this can be integrated into existing scripts for isc-dhcpd-server because config and interface need to come and go as mode is switched.<br>
+        <br>
+        Configure: hostapd.conf<br>
+        <pre>
+        interface=[portal_interface]
+        driver=nl80211
+        ssid=WCAutoConfig
+        hw_mode=g
+        channel=[portal_channel]
+        auth_algs=1
+        beacon_int=100
+        dtim_period=2
+        # RTS/CTS threshold; 2347 = disabled (default)
+        rts_threshold=2347
+        # Fragmentation threshold; 2346 = disabled (default)
+        fragm_threshold=2346
+
+        wpa=2
+        wpa_passphrase=[portal_wpa_passphrase]
+        wpa_key_mgmt=WPA-PSK
+        wpa_pairwise=CCMP
+        wpa_group_rekey=86400
+        </pre>
+        <br>
+        Configure: dnsmasq.conf<br>
+        <pre>
+          no-resolv
+          interface=[portal_interface]
+          no-dhcp-interface=[portal_interface]
+          address=/#/[portal_ipaddress]
+        </pre>
+        <br>
+        Operational Modes:<br>
+        Host AP On: reconfigure dhcpd, enable hostapd, enable dnsmasq<br>
+        Host AP Off: reconfigure dhcpd (is this actually needed?), disable hostapd, disable dnsmasq<br>
+        Client WiFi On: configure wlan0, wifi on<br>
+        Client WiFi Off: wifi off<br>
+        NOTE: Off is off, use rfkill, clear wpa_supplicant, disable hostapd etc.
+      </div>
+</body>
+</html>

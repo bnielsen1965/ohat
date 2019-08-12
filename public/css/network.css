@@ -1,0 +1,9 @@
+
+#otgsubnetform {
+  margin: 1em auto 0 auto;
+}
+#otgsubnetform label {
+  width: 12em;
+  height: 1em;
+  float: left;
+}

@@ -1,0 +1,44 @@
+
+@font-face {
+  font-family: 'Roboto-Regular';
+  src: url('../fonts/Roboto/Roboto-Regular.ttf');
+}
+
+html {
+  font-family: 'Roboto-Regular', Fallback, sans-serif;
+}
+
+
+#errors {
+  color: red;
+  font-weight: bold;
+}
+
+#messages {
+  color: blue;
+  font-weight: bold;
+}
+
+
+#menu a {
+  margin: 0 15px 0 0;
+}
+
+
+.secured {
+  display: none;
+}
+
+
+.settingsform {
+  margin: 1em auto 0 auto;
+}
+.settingsform label {
+  width: 12em;
+  height: 1em;
+  float: left;
+}
+.settingsform hr {
+  border-style: solid;
+  border-color: #eee;
+}
